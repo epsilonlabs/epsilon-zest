@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.epsilon.common.dt.console.EpsilonConsole;
-import org.eclipse.epsilon.eol.IEolModule;
+import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.dt.debug.EolDebugger;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.dt.launching.EolLaunchConfigurationDelegate;
@@ -33,7 +33,7 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 
 	@Override
 	public boolean launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
-			final IProgressMonitor progressMonitor, final IEolModule module, EolDebugger debugger,
+			final IProgressMonitor progressMonitor, final IEolExecutableModule module, EolDebugger debugger,
 			final String lauchConfigurationSourceAttribute, boolean setup, boolean disposeModelRepository)
 					throws CoreException {
 		collectListeners();

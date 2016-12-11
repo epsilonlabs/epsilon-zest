@@ -3,7 +3,7 @@ package org.eclipse.epsilon.zest;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.eclipse.epsilon.eol.IEolModule;
+import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.dom.Operation;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
@@ -45,7 +45,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 
 	private Graph graph = new Graph();
 	private BiMap<Object, Node> object2Node = HashBiMap.create();
-	private IEolModule module;
+	private IEolExecutableModule module;
 
 	public EpsilonZestGraphView() {
 		super(Guice.createInjector(Modules.override(new EpsilonZestGraphModule()).with(new ZestFxUiModule())));
@@ -58,7 +58,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		disposeModule();
 	}
 
-	public void load(IEolModule newModule) {
+	public void load(IEolExecutableModule newModule) {
 		graph = new Graph();
 		ZestProperties.setLayoutAlgorithm(graph, new SpringLayoutAlgorithm());
 		EpsilonZestProperties.setView(graph, this);
