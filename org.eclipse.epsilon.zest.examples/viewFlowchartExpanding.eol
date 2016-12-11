@@ -1,0 +1,16 @@
+@initial
+operation init() {
+  return Node.all.selectOne(n|n.incoming.isEmpty);
+}
+
+operation Node outgoing() {
+  return self.outgoing.target.flatten;
+}
+
+operation Node nodeLabel() {
+  return self.name;
+}
+
+operation Node edgeLabel(t : Node) {
+  return self.outgoing.selectOne(o|o.target=t).name;
+}

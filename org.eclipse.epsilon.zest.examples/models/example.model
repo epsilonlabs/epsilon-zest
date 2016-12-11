@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<flowchart:Flowchart xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowchart="flowchart" xmi:id="_k5MKAL5aEeahDL-FXXhX6g">
+  <nodes xsi:type="flowchart:Action" xmi:id="_sqjNgL5aEeahDL-FXXhX6g" name="A" outgoing="_0tLAIL5aEeahDL-FXXhX6g"/>
+  <nodes xsi:type="flowchart:Decision" xmi:id="_tTNI8L5aEeahDL-FXXhX6g" name="D1" outgoing="_1T9TUL5aEeahDL-FXXhX6g _1rPx8L5aEeahDL-FXXhX6g" incoming="_0tLAIL5aEeahDL-FXXhX6g"/>
+  <nodes xsi:type="flowchart:Action" xmi:id="_t9uFkL5aEeahDL-FXXhX6g" name="B" incoming="_1T9TUL5aEeahDL-FXXhX6g"/>
+  <nodes xsi:type="flowchart:Action" xmi:id="_uVoPQL5aEeahDL-FXXhX6g" name="C" incoming="_1rPx8L5aEeahDL-FXXhX6g"/>
+  <transitions xmi:id="_0tLAIL5aEeahDL-FXXhX6g" name="start" source="_sqjNgL5aEeahDL-FXXhX6g" target="_tTNI8L5aEeahDL-FXXhX6g"/>
+  <transitions xmi:id="_1T9TUL5aEeahDL-FXXhX6g" name="goToB" source="_tTNI8L5aEeahDL-FXXhX6g" target="_t9uFkL5aEeahDL-FXXhX6g"/>
+  <transitions xmi:id="_1rPx8L5aEeahDL-FXXhX6g" name="goToC" source="_tTNI8L5aEeahDL-FXXhX6g" target="_uVoPQL5aEeahDL-FXXhX6g"/>
+</flowchart:Flowchart>

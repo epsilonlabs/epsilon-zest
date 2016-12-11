@@ -1,0 +1,49 @@
+/*
+ * This version skips the decisions altogether, "compressing"
+ * the path by separating with commas.
+ */
+
+@initial
+operation init() {
+  return Action.all;
+}
+
+operation Action outgoing() {
+  return self.outgoing.collect(o|o.getActions()).flatten;
+}
+
+operation Action nodeLabel() {
+  return self.name;
+}
+
+operation Transition getActions() {
+  if (self.target.isKindOf(Action)) {
+    return self.target;
+  } else {
+    // skip this non-action node, go to the targets
+    return self.target.outgoing.collect(o|o.getActions());
+  }
+}
+
+operation Action edgeLabel(other : Action) {
+  var newPaths = self.outgoing.collect(o | Sequence{o});
+  while (not newPaths.isEmpty) {
+    var paths = newPaths;
+    newPaths = Sequence {};
+
+    for (path in paths) {
+      if (path.last.target = other) {
+        return path.collect(t|t.name).concat(', ');
+      } else {
+        for (extraEdge in path.last.target.outgoing) {
+          var newPath = Sequence {};
+          newPath.addAll(path);
+          newPath.add(extraEdge);
+          newPaths.add(newPath);
+        }
+      }
+    }
+  }
+
+  return "???";
+}
