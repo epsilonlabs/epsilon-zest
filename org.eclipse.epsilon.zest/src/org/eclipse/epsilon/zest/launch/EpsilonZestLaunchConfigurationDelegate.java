@@ -13,6 +13,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.zest.EpsilonZestGraphView;
 import org.eclipse.epsilon.zest.EpsilonZestPlugin;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -70,8 +71,11 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 			public void run() {
 				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
-					EpsilonZestGraphView zestView = (EpsilonZestGraphView)activePage.showView(EpsilonZestGraphView.ID);
-					zestView.load(module);
+					final IViewPart rawView = activePage.showView(EpsilonZestGraphView.ID);
+					if (rawView instanceof EpsilonZestGraphView) {
+						EpsilonZestGraphView zestView = (EpsilonZestGraphView)rawView;
+						zestView.load(module);
+					}
 				} catch (PartInitException e) {
 					EpsilonZestPlugin.getDefault().logException(e);
 				}
