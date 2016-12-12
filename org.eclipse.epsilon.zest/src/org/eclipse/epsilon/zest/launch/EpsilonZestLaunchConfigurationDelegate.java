@@ -12,6 +12,7 @@ import org.eclipse.epsilon.eol.dt.launching.EolLaunchConfigurationDelegate;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.zest.EpsilonZestGraphView;
 import org.eclipse.epsilon.zest.EpsilonZestPlugin;
+import org.eclipse.epsilon.zest.utils.CallableRunnable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -45,16 +46,23 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 
 		if (!parse(module, lauchConfigurationSourceAttribute, configuration, mode, launch, progressMonitor)) return false;
 
-		try { 
-			EclipseContextManager.setup(module.getContext(),configuration, progressMonitor, launch, setup);
+		try {
+			// Load models in UI thread (otherwise, we get "not in tx" exceptions with Hawk)
+			CallableRunnable.syncExec(new CallableRunnable<Object>(){
+				@Override
+				public Object call() throws Exception {
+					EclipseContextManager.setup(module.getContext(),configuration, progressMonitor, launch, setup);
+					return null;
+				}
+			});
+
 			aboutToExecute(configuration, mode, launch, progressMonitor, module);
 			String subtask = "Executing";
 			progressMonitor.subTask(subtask);
 			progressMonitor.beginTask(subtask, 100);
-			
+
 			result = module.execute();
 			executed(configuration, mode, launch, progressMonitor, module, result);
-			
 		} catch (Exception e) {
 			e = EolRuntimeException.wrap(e);
 			e.printStackTrace();

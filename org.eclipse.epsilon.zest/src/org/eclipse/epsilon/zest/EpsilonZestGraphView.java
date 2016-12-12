@@ -16,6 +16,7 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
+import org.eclipse.swt.widgets.Display;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -62,25 +63,28 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		graph = new Graph();
 		ZestProperties.setLayoutAlgorithm(graph, new SpringLayoutAlgorithm());
 		EpsilonZestProperties.setView(graph, this);
+		setGraph(graph);
 
 		disposeModule();
 		module = newModule;
-
-		Iterable<Object> nodeObjects = getInitialNodes();
 		object2Node = HashBiMap.create();
 
-		// First loop: create nodes, set labels
-		for (Object nodeObject : nodeObjects) {
-			mapToNode(nodeObject);
-		}
+		Display.getDefault().asyncExec(new Runnable(){
+			@Override
+			public void run() {
+				Iterable<Object> nodeObjects = getInitialNodes();
 
-		// Second loop: create edges (ignore edges to non-initial nodes for now)
-		for (final Object sourceObject : object2Node.keySet()) {
-			expandOutgoing(sourceObject, MissingNodeHandling.SKIP_MISSING);
-		}
+				// First loop: create nodes, set labels
+				for (Object nodeObject : nodeObjects) {
+					mapToNode(nodeObject);
+				}
 
-		// TODO: need to add policy that expands outgoing on double click
-		setGraph(graph);
+				// Second loop: create edges (ignore edges to non-initial nodes for now)
+				for (final Object sourceObject : object2Node.keySet()) {
+					expandOutgoing(sourceObject, MissingNodeHandling.SKIP_MISSING);
+				}
+			}
+		});
 	}
 
 	protected void expandOutgoing(final Object sourceObject, MissingNodeHandling mode) {
@@ -144,7 +148,15 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	protected void disposeModule() {
 		if (module != null) {
 			IEolContext context = module.getContext();
-			context.getModelRepository().dispose();
+
+			// Models are always handled from the UI thread
+			Display.getDefault().syncExec(new Runnable(){
+				@Override
+				public void run() {
+					context.getModelRepository().dispose();
+				}
+			});
+
 			context.getExecutorFactory().getExecutionController().dispose();
 			module = null;
 		}

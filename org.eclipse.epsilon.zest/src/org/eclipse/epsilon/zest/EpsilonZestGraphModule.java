@@ -10,6 +10,7 @@ import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
+import org.eclipse.swt.widgets.Display;
 
 import com.google.inject.multibindings.MapBinder;
 
@@ -39,7 +40,12 @@ public class EpsilonZestGraphModule extends ZestFxModule {
 				final org.eclipse.gef4.graph.Node node = nodePart.getContent();
 				final EpsilonZestGraphView view = EpsilonZestProperties.getView(node.getGraph());
 				final Object modelElement = view.mapToModelElement(node);
-				view.expandOutgoing(modelElement, MissingNodeHandling.ADD_MISSING);
+				Display.getDefault().asyncExec(new Runnable(){
+					@Override
+					public void run() {
+						view.expandOutgoing(modelElement, MissingNodeHandling.ADD_MISSING);
+					}
+				});
 			}
 		}
 	}
