@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Generic Zest-based visualization of Hawk graphs
+Bundle-SymbolicName: org.eclipse.epsilon.zest.hawk
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Aston University
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

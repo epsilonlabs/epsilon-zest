@@ -1,0 +1,35 @@
+@initial
+operation roots() {
+  var r : Sequence;
+  r.addAll(Model.files);
+  r.addAll(Model.files.roots.flatten);
+  return r;
+}
+
+operation Any nodeLabel() {
+  if (self.isFile()) {
+    return self.path;
+  } else {
+    return self.getTypeName();
+  }
+}
+
+operation Any edgeLabel(target) {
+  if (self.isFile()) {
+    return 'file';
+  } else {
+    return '?';
+  }
+}
+
+operation Any outgoing() {
+  if (self.isFile()) {
+    return self.roots;
+  } else {
+    return self.hawkOut;
+  }
+}
+
+operation Any isFile() : Boolean {
+  return self.getTypeName() == '_hawkFileNode';
+}
