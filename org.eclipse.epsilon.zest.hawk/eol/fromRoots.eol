@@ -14,19 +14,20 @@ operation Any nodeLabel() {
   }
 }
 
-operation Any edgeLabel(target) {
-  if (self.isFile()) {
-    return 'file';
-  } else {
-    return '?';
-  }
-}
-
 operation Any outgoing() {
   if (self.isFile()) {
-    return self.roots;
+    return Map {"root" = self.roots};
   } else {
-    return self.hawkOut;
+    var out : Map;
+    for (e in self.hawkOutEdges) {
+      var edges = out.get(e.name);
+      if (not edges.isDefined()) {
+        edges = Sequence {};
+        out.put(e.name, edges);
+      }
+      edges.add(e.target);
+    }
+    return out;
   }
 }
 

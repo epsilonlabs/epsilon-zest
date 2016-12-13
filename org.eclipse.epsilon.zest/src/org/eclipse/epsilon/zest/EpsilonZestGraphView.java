@@ -1,7 +1,8 @@
 package org.eclipse.epsilon.zest;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.dom.Operation;
@@ -41,7 +42,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	public static final String ID = "org.eclipse.epsilon.zest.view";
 
 	private static final String OP_NODE_LABEL = "nodeLabel";
-	private static final String OP_EDGE_LABEL = "edgeLabel";
 	private static final String OP_OUTGOING = "outgoing";
 
 	private Graph graph = new Graph();
@@ -88,12 +88,15 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	}
 
 	protected void expandOutgoing(final Object sourceObject, MissingNodeHandling mode) {
-		for (Object targetObject : getOutgoing(sourceObject)) {
-			mapToEdge(sourceObject, targetObject, mode);
+		for (Entry<String, Object> entry : getOutgoing(sourceObject).entrySet()) {
+			String label = entry.getKey();
+			for (Object targetObject : adaptToIterable(entry.getValue())) {
+				mapToEdge(sourceObject, targetObject, label, mode);
+			}
 		}
 	}
 
-	protected Edge mapToEdge(final Object source, final Object target, final MissingNodeHandling mode) {
+	protected Edge mapToEdge(final Object source, final Object target, final String label, final MissingNodeHandling mode) {
 		final Node sourceNode = object2Node.get(source);
 		assert sourceNode != null : "The source node should already exist";
 
@@ -117,7 +120,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 
 		// Create new edge
-		final String label = getEdgeLabel(source, target);
 		Edge e = new Edge(sourceNode, targetNode);
 		ZestProperties.setLabel(e, label);
 		ZestProperties.setTargetDecoration(e, ArrowTypes.filledTriangle());;
@@ -181,26 +183,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 	}
 
-	protected String getEdgeLabel(Object source, Object target) {
-		try {
-			final IEolContext ctx = module.getContext();
-			final Operation opLabel = module.getOperations().getOperation(source, OP_EDGE_LABEL, Arrays.asList(target),	ctx);
-
-			if (opLabel == null) {
-				EpsilonZestPlugin.getDefault()
-						.logWarning("Object " + source + " has no " + OP_EDGE_LABEL + " context operation");
-				return "<NONE>";
-			} else {
-				Object result = opLabel.execute(source, Arrays.asList(target), ctx);
-				return result + "";
-			}
-		} catch (EolRuntimeException e) {
-			EpsilonZestPlugin.getDefault().logException(e);
-			return "<ERROR>";
-		}
-	}
-
-	protected Iterable<Object> getOutgoing(Object nodeObject) {
+	protected Map<String, Object> getOutgoing(Object nodeObject) {
 		try {
 			final IEolContext ctx = module.getContext();
 			final Operation opLabel = module.getOperations().getOperation(nodeObject, OP_OUTGOING,
@@ -209,14 +192,14 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 			if (opLabel == null) {
 				EpsilonZestPlugin.getDefault()
 						.logWarning("Object " + nodeObject + " has no " + OP_OUTGOING + " context operation");
-				return Collections.emptyList();
+				return Collections.emptyMap();
 			} else {
 				Object result = opLabel.execute(nodeObject, Collections.emptyList(), ctx);
-				return adaptToIterable(result);
+				return adaptToStringMap(result);
 			}
 		} catch (EolRuntimeException e) {
 			EpsilonZestPlugin.getDefault().logException(e);
-			return Collections.emptyList();
+			return Collections.emptyMap();
 		}
 	}
 
@@ -232,6 +215,17 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 			}
 		}
 		return Collections.emptyList();
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> adaptToStringMap(Object result) {
+		if (result instanceof Map) {
+			return (Map<String, Object>)result;
+		} else if (result instanceof Iterable) {
+			return Collections.singletonMap("out", result);
+		} else {
+			return Collections.singletonMap("out", Collections.singletonList(result));
+		}
 	}
 
 	@SuppressWarnings("unchecked")

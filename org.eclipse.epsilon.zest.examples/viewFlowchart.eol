@@ -4,13 +4,9 @@ operation init() {
 }
 
 operation Node outgoing() {
-  return self.outgoing.target.flatten;
+  return self.outgoing.aggregate(e|e.name, e.target);
 }
 
 operation Node nodeLabel() {
-  return self.name;
-}
-
-operation Node edgeLabel(t : Node) {
-  return self.outgoing.selectOne(o|o.target=t).name;
+  return self.eClass.name + ' ' + self.name;
 }

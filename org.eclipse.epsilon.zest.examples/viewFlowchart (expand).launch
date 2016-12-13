@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.epsilon.zest.launchConfigurationType">
 <booleanAttribute key="fine_grained_profiling" value="false"/>
 <listAttribute key="models">
-<listEntry value="isMetamodelFileBased=false&#10;name=Model&#10;readOnLoad=true&#10;storeOnDisposal=false&#10;aliases=&#10;cached=true&#10;fileBasedMetamodelUri=&#10;metamodelUri=flowchart&#10;modelUri=platform\:/resource/org.eclipse.epsilon.zest.examples/models/example.model&#10;reuseUnmodifiedFileBasedMetamodels=true&#10;type=EMF&#10;modelFile=/org.eclipse.epsilon.zest.examples/models/example.model&#10;expand=true&#10;metamodelFile="/>
+<listEntry value="isMetamodelFileBased=true&#10;name=Model&#10;readOnLoad=true&#10;storeOnDisposal=false&#10;aliases=&#10;cached=true&#10;fileBasedMetamodelUri=platform\:/resource/org.eclipse.epsilon.zest.examples/metamodels/flowchart.ecore&#10;metamodelUri=&#10;modelUri=platform\:/resource/org.eclipse.epsilon.zest.examples/models/example.model&#10;reuseUnmodifiedFileBasedMetamodels=true&#10;type=EMF&#10;modelFile=/org.eclipse.epsilon.zest.examples/models/example.model&#10;expand=true&#10;metamodelFile=/org.eclipse.epsilon.zest.examples/metamodels/flowchart.ecore"/>
 </listAttribute>
 <listAttribute key="parameters"/>
 <booleanAttribute key="profile_model_loading" value="false"/>
