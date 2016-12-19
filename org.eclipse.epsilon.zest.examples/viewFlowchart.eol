@@ -10,3 +10,13 @@ operation Node outgoing() {
 operation Node nodeLabel() {
   return self.eClass.name + ' ' + self.name;
 }
+
+operation Node properties() {
+  return Map {'name' = self.name};
+}
+
+operation Node setProperty(name: String, value: Any) {
+  if (name = 'name') {
+    self.name = value;
+  }
+}

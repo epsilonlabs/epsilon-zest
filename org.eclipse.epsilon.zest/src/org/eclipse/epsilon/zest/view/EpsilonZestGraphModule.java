@@ -56,7 +56,6 @@ public class EpsilonZestGraphModule extends ZestFxModule {
 
 	@Override
 	protected void bindNodePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// TODO Auto-generated method stub
 		super.bindNodePartAdapters(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EpsilonExpandOnClickPolicy.class);
 	}

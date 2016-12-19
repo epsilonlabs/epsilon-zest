@@ -3,7 +3,6 @@ package org.eclipse.epsilon.zest.view;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.epsilon.zest.EpsilonZestPlugin;
 import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
-import org.eclipse.epsilon.zest.utils.CallableRunnable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
@@ -20,14 +19,7 @@ public class EpsilonZestAdapterFactory implements IAdapterFactory {
 				try {
 					final EpsilonZestNode node = (EpsilonZestNode) adaptableObject;
 					final EpsilonZestGraphView view = EpsilonZestProperties.getView(node.getGraph());
-					final Object modelElement = EpsilonZestProperties.getModelElement(node);
-
-					return CallableRunnable.syncExec(new CallableRunnable<IPropertySource>() {
-						@Override
-						public IPropertySource call() throws Exception {
-							return view.getNodePropertySource(modelElement);
-						}
-					});
+					return view.getPropertySource(node);
 				} catch (Exception e) {
 					EpsilonZestPlugin.getDefault().logException(e);
 				}

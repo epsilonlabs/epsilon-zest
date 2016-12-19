@@ -39,9 +39,9 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.epsilon.zest.graph.EpsilonZestNode"
-            class="org.eclipse.epsilon.zest.graph.EpsilonZestAdapter">
+            class="org.eclipse.epsilon.zest.view.EpsilonZestAdapterFactory">
          <adapter
-               type="org.eclipse.epsilon.zest.Adapter1">
+               type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
    </extension>
