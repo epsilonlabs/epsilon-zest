@@ -1,7 +1,6 @@
-package org.eclipse.epsilon.zest;
+package org.eclipse.epsilon.zest.view;
 
-import org.eclipse.epsilon.zest.EpsilonZestGraphView.MissingNodeHandling;
-import org.eclipse.epsilon.zest.utils.EpsilonZestProperties;
+import org.eclipse.epsilon.zest.view.EpsilonZestGraphView.MissingNodeHandling;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
@@ -39,7 +38,7 @@ public class EpsilonZestGraphModule extends ZestFxModule {
 
 				final org.eclipse.gef4.graph.Node node = nodePart.getContent();
 				final EpsilonZestGraphView view = EpsilonZestProperties.getView(node.getGraph());
-				final Object modelElement = view.mapToModelElement(node);
+				final Object modelElement = EpsilonZestProperties.getModelElement(node);
 				Display.getDefault().asyncExec(new Runnable(){
 					@Override
 					public void run() {

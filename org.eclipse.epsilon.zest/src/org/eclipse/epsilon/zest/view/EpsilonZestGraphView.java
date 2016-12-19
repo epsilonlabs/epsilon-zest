@@ -1,6 +1,7 @@
-package org.eclipse.epsilon.zest;
+package org.eclipse.epsilon.zest.view;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -8,8 +9,10 @@ import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.dom.Operation;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
+import org.eclipse.epsilon.zest.EpsilonZestPlugin;
+import org.eclipse.epsilon.zest.graph.EpsilonZestEdge;
+import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
 import org.eclipse.epsilon.zest.utils.ArrowTypes;
-import org.eclipse.epsilon.zest.utils.EpsilonZestProperties;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -18,8 +21,8 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.views.properties.IPropertySource;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
@@ -45,7 +48,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	private static final String OP_OUTGOING = "outgoing";
 
 	private Graph graph = new Graph();
-	private BiMap<Object, Node> object2Node = HashBiMap.create();
+	private Map<Object, EpsilonZestNode> object2Node = new HashMap<>();
 	private IEolExecutableModule module;
 
 	public EpsilonZestGraphView() {
@@ -87,7 +90,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		});
 	}
 
-	protected void expandOutgoing(final Object sourceObject, MissingNodeHandling mode) {
+	public void expandOutgoing(final Object sourceObject, MissingNodeHandling mode) {
 		for (Entry<String, Object> entry : getOutgoing(sourceObject).entrySet()) {
 			String label = entry.getKey();
 			for (Object targetObject : adaptToIterable(entry.getValue())) {
@@ -96,7 +99,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 	}
 
-	protected Edge mapToEdge(final Object source, final Object target, final String label, final MissingNodeHandling mode) {
+	public Edge mapToEdge(final Object source, final Object target, final String label, final MissingNodeHandling mode) {
 		final Node sourceNode = object2Node.get(source);
 		assert sourceNode != null : "The source node should already exist";
 
@@ -120,20 +123,20 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 
 		// Create new edge
-		Edge e = new Edge(sourceNode, targetNode);
+		Edge e = new EpsilonZestEdge(sourceNode, targetNode);
 		ZestProperties.setLabel(e, label);
-		ZestProperties.setTargetDecoration(e, ArrowTypes.filledTriangle());;
+		ZestProperties.setTargetDecoration(e, ArrowTypes.filledTriangle());
 		e.setGraph(graph);
 		graph.getEdges().add(e);
 
 		return e;
 	}
 
-	protected Node mapToNode(Object nodeObject) {
-		Node n = object2Node.get(nodeObject);
-		
+	public EpsilonZestNode mapToNode(Object nodeObject) {
+		EpsilonZestNode n = object2Node.get(nodeObject);
+
 		if (n == null) {
-			n = new Node();
+			n = new EpsilonZestNode();
 			ZestProperties.setLabel(n, getNodeLabel(nodeObject));
 			n.setGraph(graph);
 			graph.getNodes().add(n);
@@ -141,10 +144,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 
 		return n;
-	}
-
-	protected Object mapToModelElement(Node graphNode) {
-		return object2Node.inverse().get(graphNode);
 	}
 
 	protected void disposeModule() {
@@ -164,7 +163,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 	}
 
-	protected String getNodeLabel(Object nodeObject) {
+	public String getNodeLabel(Object nodeObject) {
 		try {
 			final IEolContext ctx = module.getContext();
 			final Operation opLabel = module.getOperations().getOperation(nodeObject, OP_NODE_LABEL,
@@ -183,7 +182,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 	}
 
-	protected Map<String, Object> getOutgoing(Object nodeObject) {
+	public Map<String, Object> getOutgoing(Object nodeObject) {
 		try {
 			final IEolContext ctx = module.getContext();
 			final Operation opLabel = module.getOperations().getOperation(nodeObject, OP_OUTGOING,
@@ -203,7 +202,11 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		}
 	}
 
-	protected Iterable<Object> getInitialNodes() {
+	public IPropertySource getNodePropertySource(Object modelElement) {
+		return new EpsilonZestElementPropertySource(modelElement);
+	}
+
+	public Iterable<Object> getInitialNodes() {
 		for (Operation op : module.getOperations()) {
 			if (op.hasAnnotation("initial")) {
 				try {
@@ -218,7 +221,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> adaptToStringMap(Object result) {
+	protected Map<String, Object> adaptToStringMap(Object result) {
 		if (result instanceof Map) {
 			return (Map<String, Object>)result;
 		} else if (result instanceof Iterable) {
