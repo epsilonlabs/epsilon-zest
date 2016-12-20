@@ -2,7 +2,6 @@ package org.eclipse.epsilon.zest.view;
 
 import java.util.Map;
 
-import org.eclipse.epsilon.zest.EpsilonZestPlugin;
 import org.eclipse.epsilon.zest.eol.EpsilonZestModuleWrapper;
 import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
 import org.eclipse.epsilon.zest.utils.CallableRunnable;
@@ -14,11 +13,7 @@ import org.eclipse.epsilon.zest.utils.CallableRunnable;
  */
 public class EpsilonZestNodePropertySource extends AbstractEpsilonZestPropertySource {
 
-	private final EpsilonZestNode node;
-
 	public EpsilonZestNodePropertySource(EpsilonZestNode node) throws Exception {
-		this.node = node;
-
 		final Object nodeObject = EpsilonZestProperties.getModelElement(node);
 		final EpsilonZestModuleWrapper moduleWrapper = EpsilonZestProperties.getView(node.getGraph()).getModuleWrapper();
 

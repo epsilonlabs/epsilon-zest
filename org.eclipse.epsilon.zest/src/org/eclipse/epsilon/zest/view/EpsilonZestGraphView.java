@@ -10,6 +10,7 @@ import org.eclipse.epsilon.zest.eol.EpsilonZestModuleWrapper;
 import org.eclipse.epsilon.zest.graph.EpsilonZestEdge;
 import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
 import org.eclipse.epsilon.zest.utils.ArrowTypes;
+import org.eclipse.epsilon.zest.view.dialogs.SaveAsImageAction;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -17,7 +18,12 @@ import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
@@ -45,6 +51,20 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	}
 
 	@Override
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+
+		javafx.scene.Node node = getContentViewer().getRootPart().getVisual();
+		Action saveAsImageAction = new SaveAsImageAction(node);
+
+		IActionBars actionBars = getViewSite().getActionBars();
+		IMenuManager dropDownMenu = actionBars.getMenuManager();
+		IToolBarManager toolBar = actionBars.getToolBarManager();
+		dropDownMenu.add(saveAsImageAction);
+		toolBar.add(saveAsImageAction);
+	}
+
+	@Override
 	public void dispose() {
 		setGraph(null);
 		super.dispose();
@@ -54,7 +74,8 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	/**
 	 * Repopulates the build using an EOL module. This method can be called from
 	 * any thread.
-	 * @param layoutAlgo 
+	 * 
+	 * @param layoutAlgo
 	 */
 	public void load(IEolExecutableModule newModule, ILayoutAlgorithm algorithm) {
 		graph = new Graph();
@@ -123,7 +144,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 
 	/**
 	 * Maps a reference from the source to the target into an edge with the
-	 * specified label. This 
+	 * specified label. This
 	 */
 	private Edge mapToEdge(final Object source, final Object target, final String label,
 			final MissingNodeHandling mode) {

@@ -14,11 +14,7 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
  */
 public class EpsilonZestEdgePropertySource extends AbstractEpsilonZestPropertySource {
 
-	private final EpsilonZestEdge edge;
-
 	public EpsilonZestEdgePropertySource(EpsilonZestEdge edge) throws Exception {
-		this.edge = edge;
-
 		final Object sourceObject = EpsilonZestProperties.getModelElement(edge.getSource());
 		final Object targetObject = EpsilonZestProperties.getModelElement(edge.getTarget());
 		final String label = ZestProperties.getLabel(edge);
@@ -34,9 +30,4 @@ public class EpsilonZestEdgePropertySource extends AbstractEpsilonZestPropertySo
 		computeDescriptors();
 	}
 
-	@Override
-	public void setPropertyValue(Object id, Object value) {
-		// TODO Auto-generated method stub
-
-	}
 }
