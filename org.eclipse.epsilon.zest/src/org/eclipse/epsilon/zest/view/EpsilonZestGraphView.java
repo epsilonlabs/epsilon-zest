@@ -59,7 +59,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	public void load(IEolExecutableModule newModule, ILayoutAlgorithm algorithm) {
 		graph = new Graph();
 
-		ZestProperties.setLayoutAlgorithm(graph, algorithm);
 		EpsilonZestProperties.setView(graph, this);
 
 		disposeModule();
@@ -84,6 +83,11 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 			}
 		});
 
+		if (!graph.getNodes().isEmpty()) {
+			// Some layout algorithms do not deal well with empty graphs
+			// (e.g. Grid) - avoid specifying one in this case
+			ZestProperties.setLayoutAlgorithm(graph, algorithm);
+		}
 		setGraph(graph);
 	}
 
