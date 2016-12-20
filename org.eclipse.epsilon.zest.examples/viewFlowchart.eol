@@ -15,8 +15,11 @@ operation Node properties() {
   return Map {'name' = self.name};
 }
 
-operation Node setProperty(name: String, value: Any) {
-  if (name = 'name') {
-    self.name = value;
-  }
+operation Node properties(edgeLabel: String, target: Any) {
+  var transition = self.outgoing.selectOne(e | e.name = edgeLabel and e.target = target);
+  return Map {
+    'name' = transition.name,
+    'source' = transition.source.name,
+    'target' = transition.target.name
+  };
 }

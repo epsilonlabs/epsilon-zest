@@ -10,24 +10,17 @@ import org.eclipse.epsilon.zest.eol.EpsilonZestModuleWrapper;
 import org.eclipse.epsilon.zest.graph.EpsilonZestEdge;
 import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
 import org.eclipse.epsilon.zest.utils.ArrowTypes;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.parts.NodePart;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.views.properties.IPropertySource;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
-
-import javafx.geometry.Bounds;
 
 /**
  * View that populates a Zest graph-based visualization from an EOL script with
@@ -124,37 +117,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	}
 
 	/**
-	 * Returns a property source for the specified Epsilon Zest node.
-	 */
-	protected IPropertySource getPropertySource(final EpsilonZestNode node) throws Exception {
-		return new EpsilonZestNodePropertySource(node);
-	}
-
-	/**
-	 * Set the visual properties and labels of the node using the provided EOL script.
-	 */
-	protected void styleNode(EpsilonZestNode n) {
-		Object nodeObject = EpsilonZestProperties.getModelElement(n);
-		ZestProperties.setLabel(n, moduleWrapper.getNodeLabel(nodeObject));
-
-		IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> part = getContentViewer().getContentPartMap().get(n);
-		if (part instanceof NodePart) {
-			javafx.scene.Node visual = part.getVisual();
-			Bounds hostBounds = visual.getLayoutBounds();
-			final double minx = hostBounds.getMinX();
-			final double miny = hostBounds.getMinY();
-			final double maxx = hostBounds.getMaxX();
-			final double maxy = hostBounds.getMaxY();
-			final Dimension preLayoutSize = new Dimension(maxx - minx, maxy - miny);
-
-			// "layout_size" doesn't seem to work, but I can't find "size" in the
-			// GEF code either - possibly a JavaFX-specific part?
-			LayoutProperties.setSize(n, preLayoutSize.getCopy());
-			n.getAttributes().put("size", preLayoutSize.getCopy());
-		}
-	}
-
-	/**
 	 * Maps a reference from the source to the target into an edge with the
 	 * specified label. This 
 	 */
@@ -198,11 +160,11 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		if (n == null) {
 			n = new EpsilonZestNode();
 			n.setGraph(graph);
-			graph.getNodes().add(n);
-			object2Node.put(nodeObject, n);
+			ZestProperties.setLabel(n, moduleWrapper.getNodeLabel(nodeObject));
 			EpsilonZestProperties.setModelElement(n, nodeObject);
 
-			styleNode(n);
+			graph.getNodes().add(n);
+			object2Node.put(nodeObject, n);
 		}
 
 		return n;

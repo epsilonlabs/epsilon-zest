@@ -116,20 +116,25 @@ public class EpsilonZestModuleWrapper {
 		}
 	}
 
-	public void setProperty(Object nodeObject, String propertyName, Object newValue) {
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getEdgeProperties(Object sourceObject, Object targetObject, String label) {
 		try {
 			final IEolContext ctx = module.getContext();
-			final List<Object> parameters = Arrays.asList(propertyName, newValue);
-			final Operation opLabel = module.getOperations().getOperation(nodeObject, OP_SETPROPERTY, parameters, ctx);
+			final List<Object> parameters = Arrays.asList(label, targetObject);
+			final Operation opLabel = module.getOperations().getOperation(sourceObject, OP_PROPERTIES,
+					parameters, ctx);
 
 			if (opLabel == null) {
-				EpsilonZestPlugin.getDefault().logWarning(
-					"Object " + nodeObject + " has no " + OP_SETPROPERTY + "(String, Any) context operation");
+				EpsilonZestPlugin.getDefault()
+						.logWarning("Object " + sourceObject + " has no " + OP_PROPERTIES + "(String, Any) context operation");
+				return Collections.emptyMap();
 			} else {
-				opLabel.execute(nodeObject, parameters, ctx);
+				Object result = opLabel.execute(sourceObject, parameters, ctx);
+				return (Map<String, Object>) result;
 			}
 		} catch (EolRuntimeException e) {
 			EpsilonZestPlugin.getDefault().logException(e);
+			return Collections.emptyMap();
 		}
 	}
 
