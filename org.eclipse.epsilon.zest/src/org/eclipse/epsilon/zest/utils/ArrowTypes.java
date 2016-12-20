@@ -1,6 +1,6 @@
 package org.eclipse.epsilon.zest.utils;
 
-import javafx.scene.paint.Color;
+
 import javafx.scene.shape.Polygon;
 
 /**
@@ -12,7 +12,11 @@ public class ArrowTypes {
 
 	public static Polygon filledTriangle() {
 		Polygon triangle = new Polygon(5, -5, 5, 5, 0, 0);
-		triangle.setFill(Color.BLACK);
+
+		// setFill doesn't help - it's overridden by the default Zest CSS,
+		// so we have to use setStyle or add our own CSS to the Scene.
+		triangle.setStyle("-fx-fill: black");
+
 		return triangle;
 	}
 }
