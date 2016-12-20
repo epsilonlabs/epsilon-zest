@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.epsilon.common.dt.console.EpsilonConsole;
 import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.dt.debug.EolDebugger;
@@ -13,10 +14,16 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.zest.EpsilonZestPlugin;
 import org.eclipse.epsilon.zest.utils.CallableRunnable;
 import org.eclipse.epsilon.zest.view.EpsilonZestGraphView;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.HorizontalShiftAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -33,6 +40,19 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurationDelegate  {
 
+	public static final ILayoutAlgorithm DEFAULT_ALGORITHM = new SugiyamaLayoutAlgorithm();
+	public static final ILayoutAlgorithm[] ALGORITHMS = new ILayoutAlgorithm[]{
+		new GridLayoutAlgorithm(),      // Zest 20160906: will enter infinite loop on an empty graph if not careful
+		new HorizontalShiftAlgorithm(),
+		// new RadialLayoutAlgorithm(), // Zest 20160906: buggy? tries to resize node under minimal width 
+		new SpaceTreeLayoutAlgorithm(),
+		new SpringLayoutAlgorithm(),
+		DEFAULT_ALGORITHM,
+		new TreeLayoutAlgorithm()
+	};
+
+	private static final String LAYOUT_ATTRIBUTE = "eps.zestlayout";
+	
 	@Override
 	public boolean launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
 			final IProgressMonitor progressMonitor, final IEolExecutableModule module, EolDebugger debugger,
@@ -82,9 +102,10 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 					final IViewPart rawView = activePage.showView(EpsilonZestGraphView.ID);
 					if (rawView instanceof EpsilonZestGraphView) {
 						EpsilonZestGraphView zestView = (EpsilonZestGraphView)rawView;
-						zestView.load(module);
+						ILayoutAlgorithm layoutAlgo = getLayoutAlgorithm(configuration);
+						zestView.load(module, layoutAlgo);
 					}
-				} catch (PartInitException e) {
+				} catch (CoreException e) {
 					EpsilonZestPlugin.getDefault().logException(e);
 				}
 			}
@@ -93,4 +114,19 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 		return true;
 	}
 
+	public static ILayoutAlgorithm getLayoutAlgorithm(ILaunchConfiguration configuration) throws CoreException {
+		final String algorithmClassName = configuration.getAttribute(
+			LAYOUT_ATTRIBUTE, DEFAULT_ALGORITHM.getClass().getName()
+		);
+		for (ILayoutAlgorithm algo : ALGORITHMS) {
+			if (algo.getClass().getName().equals(algorithmClassName)) {
+				return algo;
+			}
+		}
+		return DEFAULT_ALGORITHM;
+	}
+
+	public static void setLayoutAlgorithm(ILaunchConfigurationWorkingCopy configuration, ILayoutAlgorithm algorithm) {
+		configuration.setAttribute(LAYOUT_ATTRIBUTE, algorithm.getClass().getName());
+	}
 }

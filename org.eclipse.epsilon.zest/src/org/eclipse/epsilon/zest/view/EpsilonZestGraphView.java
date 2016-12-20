@@ -13,7 +13,7 @@ import org.eclipse.epsilon.zest.utils.ArrowTypes;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
@@ -54,20 +54,19 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	/**
 	 * Repopulates the build using an EOL module. This method can be called from
 	 * any thread.
+	 * @param layoutAlgo 
 	 */
-	public void load(IEolExecutableModule newModule) {
+	public void load(IEolExecutableModule newModule, ILayoutAlgorithm algorithm) {
 		graph = new Graph();
 
-		final SpringLayoutAlgorithm algorithm = new SpringLayoutAlgorithm();
 		ZestProperties.setLayoutAlgorithm(graph, algorithm);
 		EpsilonZestProperties.setView(graph, this);
-		setGraph(graph);
 
 		disposeModule();
 		moduleWrapper = new EpsilonZestModuleWrapper(newModule);
 		object2Node = new HashMap<>();
 
-		Display.getDefault().asyncExec(new Runnable() {
+		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				Iterable<Object> nodeObjects = moduleWrapper.getInitialNodes();
@@ -84,6 +83,8 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 				}
 			}
 		});
+
+		setGraph(graph);
 	}
 
 	public EpsilonZestModuleWrapper getModuleWrapper() {

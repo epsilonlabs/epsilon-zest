@@ -14,4 +14,11 @@ public class EpsilonZestLaunchTabGroup extends EpsilonLaunchConfigurationTabGrou
 		return new EolSourceConfigurationTab();
 	}
 
+	@Override
+	public ILaunchConfigurationTab[] getOtherConfigurationTabs() {
+		return new ILaunchConfigurationTab[]{
+			new EpsilonZestVisualizationTab()
+		};
+	}
+	
 }
