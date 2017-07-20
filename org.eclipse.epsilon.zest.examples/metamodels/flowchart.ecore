@@ -34,7 +34,6 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Node"
         eOpposite="#//Node/incoming"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Subflow" eSuperTypes="#//Flowchart #//Node"/>
   <eClassifiers xsi:type="ecore:EClass" name="Action" eSuperTypes="#//Node">
     <eAnnotations source="gmf.node">
       <details key="figure" value="org.eclipse.epsilon.eugenia.examples.flowchart.diagram.figures.SquareFigure"/>

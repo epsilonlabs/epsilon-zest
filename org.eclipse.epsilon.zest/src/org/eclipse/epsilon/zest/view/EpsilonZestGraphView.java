@@ -16,7 +16,6 @@ import org.eclipse.epsilon.zest.graph.EpsilonZestEllipsisNode;
 import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
 import org.eclipse.epsilon.zest.graph.EpsilonZestObjectNode;
 import org.eclipse.epsilon.zest.utils.ArrowTypes;
-import org.eclipse.epsilon.zest.view.EpsilonZestGraphView.MissingNodeHandling;
 import org.eclipse.epsilon.zest.view.dialogs.SaveAsImageAction;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -181,9 +180,17 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 			int i = 0;
 			final List<Object> ellipsisObjects = new LinkedList<>();
 			for (Object targetObject : entry.getValue()) {
-				if (++i < ellipsisThreshold) {
+				final EpsilonZestNode targetNode = object2Node.get(targetObject);
+
+				/*
+				 * If the target node is already there, or we are adding missing
+				 * nodes and there's not too many, just add the edge. Otherwise,
+				 * if we are adding missing nodes but there's too many, just
+				 * collect them up.
+				 */
+				if (targetNode != null || mode == MissingNodeHandling.ADD_MISSING && ++i < ellipsisThreshold) {
 					mapToEdge(sourceObject, targetObject, label, mode);
-				} else {
+				} else if (mode == MissingNodeHandling.ADD_MISSING) {
 					ellipsisObjects.add(targetObject);
 				}
 			}
