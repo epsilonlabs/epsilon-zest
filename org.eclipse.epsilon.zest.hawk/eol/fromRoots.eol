@@ -31,6 +31,17 @@ operation Any outgoing() {
   }
 }
 
+operation Any properties() {
+   var node = self.getNode();
+   var m : Map;
+   for (key in node.propertyKeys) {
+     if (not key.startsWith('_hawk')) {
+       m.put(key, node.getProperty(key));
+     }
+   }
+   return m;
+}
+
 operation Any isFile() : Boolean {
   return self.getTypeName() == '_hawkFileNode';
 }

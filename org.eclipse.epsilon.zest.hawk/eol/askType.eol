@@ -1,0 +1,37 @@
+@initial
+operation roots() {
+  var r : Sequence;
+  var type = System.user.prompt('Name of the main type:');
+  var instances = Model.getAllOfKind(type);
+  return instances;
+}
+
+operation Any nodeLabel() {
+  return self.getTypeName();
+}
+
+operation Any outgoing() {
+  var out : Map;
+  for (e in self.hawkOutEdges) {
+    var edges = out.get(e.name);
+    if (not edges.isDefined()) {
+      edges = Sequence {};
+      out.put(e.name, edges);
+    }
+    edges.add(e.target);
+  }
+  return out;
+}
+
+operation Any properties() {
+   var node = self.getNode();
+   var m : Map;
+   for (key in node.propertyKeys) {
+     m.put(key, node.getProperty(key));   
+   }
+   return m;
+}
+
+operation Any isFile() : Boolean {
+  return self.getTypeName() == '_hawkFileNode';
+}
