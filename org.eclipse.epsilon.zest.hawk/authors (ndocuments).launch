@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.epsilon.zest.launchConfigurationType">
+<stringAttribute key="eps.zestlayout" value="org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm"/>
+<booleanAttribute key="fine_grained_profiling" value="false"/>
+<listAttribute key="models">
+<listEntry value="DEFAULTNAMESPACES=http\://www.eclipse.org/MoDisco/kdm/kdm&#10;aliases=kdm&#10;name=Model&#10;type=Hawk&#10;ENABLE_TRAVERSAL_SCOPING=false&#10;databaseName=ndocuments"/>
+</listAttribute>
+<listAttribute key="parameters"/>
+<booleanAttribute key="profile_model_loading" value="false"/>
+<booleanAttribute key="profiling_enabled" value="false"/>
+<booleanAttribute key="reset_profiler" value="false"/>
+<stringAttribute key="source" value="/org.eclipse.epsilon.zest.hawk/eol/authors.eol"/>
+</launchConfiguration>

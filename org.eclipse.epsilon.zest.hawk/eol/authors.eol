@@ -1,0 +1,49 @@
+@initial
+operation roots() {
+  return Author.all;
+}
+
+operation Author nodeLabel() {
+  return 'Author ' + self.name;
+}
+
+operation Author outgoing() {
+  return Map { 'knows' = self.knows, 'wrote' = self.revRefNav_writtenBy };
+}
+
+operation Author properties() {
+  return Map {
+     'name' = self.name,
+     '# knows' = self.knows.size,
+     '# known by' = self.isKnownBy.size,
+     '# wrote books' = self.revRefNav_writtenBy.size
+  };
+}
+
+operation Document nodeLabel() {
+  return 'Document ' + self.text.substring(0, 10.min(self.text.length));
+}
+
+operation Document outgoing() {
+  return Map { 'tags' = self.tags };
+}
+
+operation Document properties() {
+  return Map { 'text' = self.text };
+}
+
+operation Tag nodeLabel() {
+  return 'Tag ' + self.name;
+}
+
+operation Tag outgoing() {
+  return Map { 'isKindOf' = self.isKindOf };
+}
+
+operation Tag properties() {
+  return Map {
+    'name' = self.name,
+    '# kind of' = self.isKindOf.size,
+    '# with this tag' = self.revRefNav_tags.size
+  };
+}
