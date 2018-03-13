@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.epsilon.eol.IEolExecutableModule;
+import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.dom.Operation;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
@@ -33,26 +33,26 @@ public class EpsilonZestModuleWrapper {
 	public static final String OP_PROPERTIES = "properties";
 	public static final String OP_SETPROPERTY = "setProperty";
 
-	private final IEolExecutableModule module;
+	private final IEolModule module;
 
-	public EpsilonZestModuleWrapper(IEolExecutableModule module) {
+	public EpsilonZestModuleWrapper(IEolModule module) {
 		this.module = module;
 	}
 
-	public IEolExecutableModule getModule() {
+	public IEolModule getModule() {
 		return module;
 	}
 
 	public Iterable<Object> getInitialNodes() {
-		for (Operation op : module.getOperations()) {
-			if (op.hasAnnotation("initial")) {
-				try {
+		try {
+			for (Operation op : module.getOperations()) {
+				if (op.hasAnnotation("initial")) {
 					Object result = op.execute(null, Collections.emptyList(), module.getContext());
 					return adaptToIterable(result);
-				} catch (EolRuntimeException e) {
-					EpsilonZestPlugin.getDefault().logException(e);
 				}
 			}
+		} catch (EolRuntimeException e) {
+			EpsilonZestPlugin.getDefault().logException(e);
 		}
 		return Collections.emptyList();
 	}

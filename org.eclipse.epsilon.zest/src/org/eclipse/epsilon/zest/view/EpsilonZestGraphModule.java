@@ -4,11 +4,13 @@ import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXInteractionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 
 import com.google.inject.multibindings.MapBinder;
@@ -29,20 +31,26 @@ public class EpsilonZestGraphModule extends ZestFxModule {
 			}
 
 			IVisualPart<Node, ? extends Node> host = getHost();
-			if (e.getClickCount() != 2) {
-				return;
-			}
 
 			if (host instanceof NodePart) {
 				NodePart nodePart = (NodePart) host;
 
-				final EpsilonZestNode node = (EpsilonZestNode) nodePart.getContent();
-				Display.getDefault().asyncExec(new Runnable(){
-					@Override
-					public void run() {
-						node.expandOutgoing();
+				if (nodePart.getContent() instanceof EpsilonZestNode) {
+					final EpsilonZestNode node = (EpsilonZestNode) nodePart.getContent();
+					final Graph graph = node.getGraph();
+					final EpsilonZestGraphView view = EpsilonZestProperties.getView(graph);
+					view.getSelectionProvider().setSelection(new StructuredSelection(node));
+
+					if (e.getClickCount() == 2) {
+						Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								node.expandOutgoing();
+							}
+						});
+						return;
 					}
-				});
+				}
 			}
 		}
 	}

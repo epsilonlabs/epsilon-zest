@@ -6,7 +6,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.epsilon.common.dt.console.EpsilonConsole;
-import org.eclipse.epsilon.eol.IEolExecutableModule;
+import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.dt.debug.EolDebugger;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.dt.launching.EolLaunchConfigurationDelegate;
@@ -24,6 +24,7 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -55,7 +56,7 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 	
 	@Override
 	public boolean launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
-			final IProgressMonitor progressMonitor, final IEolExecutableModule module, EolDebugger debugger,
+			final IProgressMonitor progressMonitor, final IEolModule module, EolDebugger debugger,
 			final String lauchConfigurationSourceAttribute, boolean setup, boolean disposeModelRepository)
 					throws CoreException {
 		collectListeners();
@@ -66,7 +67,24 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 
 		if (!parse(module, lauchConfigurationSourceAttribute, configuration, mode, launch, progressMonitor)) return false;
 
+		final Display display = PlatformUI.getWorkbench().getDisplay();
 		try {
+			// Unload existing models (if any)
+			display.syncExec(new Runnable() {
+				public void run() {
+					try {
+						IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+						final IViewPart rawView = activePage.showView(EpsilonZestGraphView.ID);
+						if (rawView instanceof EpsilonZestGraphView) {
+							EpsilonZestGraphView zestView = (EpsilonZestGraphView) rawView;
+							zestView.disposeModule();
+						}
+					} catch (PartInitException ex) {
+						EpsilonZestPlugin.getDefault().logException(ex);
+					}
+				}
+			});
+
 			// Load models in UI thread (otherwise, we get "not in tx" exceptions with Hawk)
 			CallableRunnable.syncExec(new CallableRunnable<Object>(){
 				@Override
@@ -84,8 +102,9 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 			result = module.execute();
 			executed(configuration, mode, launch, progressMonitor, module, result);
 		} catch (Exception e) {
+			EpsilonZestPlugin.getDefault().logException(e);
+
 			e = EolRuntimeException.wrap(e);
-			e.printStackTrace();
 			module.getContext().getErrorStream().println(e.toString());
 			progressMonitor.setCanceled(true);
 			return false;
@@ -93,8 +112,7 @@ public class EpsilonZestLaunchConfigurationDelegate extends EolLaunchConfigurati
 
 		progressMonitor.done();
 
-		// Show Zest view and pass the EOL module to it
-		final Display display = PlatformUI.getWorkbench().getDisplay();
+		// Reset Zest view and pass the EOL module to it
 		display.syncExec(new Runnable(){
 			public void run() {
 				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

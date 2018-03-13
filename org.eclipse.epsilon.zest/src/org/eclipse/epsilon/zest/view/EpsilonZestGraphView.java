@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.epsilon.eol.IEolExecutableModule;
+import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.zest.eol.EpsilonZestModuleWrapper;
 import org.eclipse.epsilon.zest.graph.EpsilonZestEdge;
@@ -109,12 +109,9 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	 * 
 	 * @param layoutAlgo
 	 */
-	public void load(IEolExecutableModule newModule, ILayoutAlgorithm algorithm) {
+	public void load(IEolModule newModule, ILayoutAlgorithm algorithm) {
 		graph = new Graph();
-
 		EpsilonZestProperties.setView(graph, this);
-
-		disposeModule();
 		moduleWrapper = new EpsilonZestModuleWrapper(newModule);
 		object2Node = new HashMap<>();
 
@@ -321,7 +318,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		return n;
 	}
 
-	private void disposeModule() {
+	public void disposeModule() {
 		if (moduleWrapper != null) {
 			IEolContext context = moduleWrapper.getModule().getContext();
 
