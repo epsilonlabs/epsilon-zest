@@ -17,14 +17,14 @@ import org.eclipse.epsilon.zest.graph.EpsilonZestNode;
 import org.eclipse.epsilon.zest.graph.EpsilonZestObjectNode;
 import org.eclipse.epsilon.zest.utils.ArrowTypes;
 import org.eclipse.epsilon.zest.view.dialogs.SaveAsImageAction;
-import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
-import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
+import org.eclipse.gef.graph.Edge;
+import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.graph.Node;
+import org.eclipse.gef.layout.ILayoutAlgorithm;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.zest.fx.ZestProperties;
+import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
+import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -69,7 +69,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
-		final IRootPart<javafx.scene.Node, ? extends javafx.scene.Node> rootPart = getContentViewer().getRootPart();
+		final IRootPart<? extends javafx.scene.Node> rootPart = getContentViewer().getRootPart();
 		javafx.scene.Node node = rootPart.getVisual();
 		Action saveAsImageAction = new SaveAsImageAction(node);
 
@@ -166,7 +166,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 	 */
 	public void expandObject(final Object sourceObject, MissingNodeHandling mode) {
 		EpsilonZestNode node = object2Node.get(sourceObject);
-		if (!node.getLocalOutgoingEdges().isEmpty()) {
+		if (!node.getOutgoingEdges().isEmpty()) {
 			// Already expanded - don't do anything
 			return;
 		}
@@ -204,7 +204,7 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		final List<Object> ellipsisObjects = EpsilonZestProperties.getEllipsisObjects(ellipsisNode);
 		final String ellipsisLabel = EpsilonZestProperties.getEllipsisLabel(ellipsisNode);
 	
-		final Edge incomingEdge = ellipsisNode.getLocalIncomingEdges().iterator().next();
+		final Edge incomingEdge = ellipsisNode.getIncomingEdges().iterator().next();
 		final Node sourceNode = incomingEdge.getSource();
 		final Object sourceObject = EpsilonZestProperties.getModelElement(sourceNode);
 		assert sourceObject != null : "Source node should have a source object";
@@ -242,7 +242,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		assert sourceNode != null : "The source node should already exist";
 
 		final EpsilonZestEllipsisNode n = new EpsilonZestEllipsisNode();
-		n.setGraph(graph);
 		ZestProperties.setLabel(n, "...");
 		EpsilonZestProperties.setEllipsisObjects(n, ellipsisObjects);
 		EpsilonZestProperties.setEllipsisLabel(n, label);
@@ -253,7 +252,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		Edge e = new EpsilonZestEdge(sourceNode, n);
 		ZestProperties.setLabel(e, formatEllipsis(label, startIdx, endIdx));
 		ZestProperties.setTargetDecoration(e, ArrowTypes.filledTriangle());
-		e.setGraph(graph);
 		batchedEdges.add(e);
 	}
 
@@ -296,7 +294,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 		Edge e = new EpsilonZestEdge(sourceNode, targetNode);
 		ZestProperties.setLabel(e, label);
 		ZestProperties.setTargetDecoration(e, ArrowTypes.filledTriangle());
-		e.setGraph(graph);
 		batchedEdges.add(e);
 
 		return e;
@@ -307,7 +304,6 @@ public class EpsilonZestGraphView extends ZestFxUiView {
 
 		if (n == null) {
 			n = new EpsilonZestObjectNode();
-			n.setGraph(graph);
 			ZestProperties.setLabel(n, moduleWrapper.getNodeLabel(nodeObject));
 			EpsilonZestProperties.setModelElement(n, nodeObject);
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.epsilon.zest.launchConfigurationType">
-<stringAttribute key="eps.zestlayout" value="org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm"/>
+<stringAttribute key="eps.zestlayout" value="org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm"/>
 <booleanAttribute key="fine_grained_profiling" value="false"/>
 <listAttribute key="models">
 <listEntry value="DEFAULTNAMESPACES=http\://www.eclipse.org/MoDisco/kdm/kdm&#10;aliases=kdm&#10;name=Model&#10;type=Hawk&#10;ENABLE_TRAVERSAL_SCOPING=false&#10;databaseName=ndocuments"/>

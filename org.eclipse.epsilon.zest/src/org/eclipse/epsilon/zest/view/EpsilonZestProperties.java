@@ -3,9 +3,9 @@ package org.eclipse.epsilon.zest.view;
 import java.util.List;
 
 import org.eclipse.epsilon.zest.graph.EpsilonZestEllipsisNode;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.graph.Node;
+import org.eclipse.gef.zest.fx.ZestProperties;
 
 /**
  * Getter and setter methods for extra node/edge properties we may need.

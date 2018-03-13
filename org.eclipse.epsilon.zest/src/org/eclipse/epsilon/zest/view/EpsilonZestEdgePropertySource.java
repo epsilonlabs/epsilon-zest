@@ -5,7 +5,7 @@ import java.util.Map;
 import org.eclipse.epsilon.zest.eol.EpsilonZestModuleWrapper;
 import org.eclipse.epsilon.zest.graph.EpsilonZestEdge;
 import org.eclipse.epsilon.zest.utils.CallableRunnable;
-import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef.zest.fx.ZestProperties;
 
 /**
  * Uses an {@link EpsilonZestModuleWrapper} to feed the contents of the

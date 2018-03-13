@@ -2,8 +2,8 @@ package org.eclipse.epsilon.zest.graph;
 
 import java.util.Map;
 
-import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef.graph.Edge;
+import org.eclipse.gef.graph.Node;
 
 /**
  * Specialized GEF4 edges. Useful to separate our edges from other GEF4 edges

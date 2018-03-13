@@ -5,7 +5,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.epsilon.zest.EpsilonZestPlugin;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef.layout.ILayoutAlgorithm;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
