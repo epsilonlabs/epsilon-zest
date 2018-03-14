@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.epsilon.zest.feature_1.0.0.201803132359.jar" id="org.eclipse.epsilon.zest.feature" version="1.0.0.201803132359">
+   <feature url="features/org.eclipse.epsilon.zest.feature_1.0.0.201803140016.jar" id="org.eclipse.epsilon.zest.feature" version="1.0.0.201803140016">
       <category name="zest"/>
    </feature>
    <category-def name="zest" label="Epsilon Zest"/>
